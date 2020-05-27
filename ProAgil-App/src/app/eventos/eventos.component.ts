@@ -4,8 +4,7 @@ import { Evento } from '../_models/Evento';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal';
 import { FormGroup, Validators, FormBuilder } from '@angular/forms';
-
-
+import { ToastrService } from 'ngx-toastr';
 
 import { defineLocale } from 'ngx-bootstrap/chronos';
 import { BsLocaleService } from 'ngx-bootstrap/datepicker';
@@ -20,12 +19,15 @@ defineLocale('pt', ptBrLocale);
   styleUrls: ['./eventos.component.css']
 })
 export class EventosComponent implements OnInit {
+  titulo = 'Eventos';
+
   eventosFiltrados: Evento[];
   eventos: Evento[];
   evento: Evento;
 
   modoSalvar = 'put';
   bodyDeletarEvento = '';
+  dataEvento = '';
 
   imagemLargura = 50;
   imagemMargem = 2;
@@ -40,6 +42,7 @@ export class EventosComponent implements OnInit {
     , private modalService: BsModalService
     , private fb: FormBuilder
     , private localeServcice: BsLocaleService
+    , private toastr: ToastrService
     ) {
       this.localeServcice.use('pt');
     }
@@ -78,8 +81,14 @@ export class EventosComponent implements OnInit {
       () => {
         template.hide();
         this.getEventos();
+        this.toastr.success('Registo deletado com sucesso.', 'Alerta!', {
+          timeOut: 3000
+        });
       }, error => {
         console.log(error);
+        this.toastr.error('Houve um problema ao deletar o registo.', 'Alerta!', {
+          timeOut: 3000
+        });
       }
     );
   }
@@ -127,8 +136,14 @@ export class EventosComponent implements OnInit {
             console.log(novoEvento);
             template.hide();
             this.getEventos();
+            this.toastr.success('Registo inserido com sucesso.', 'Alerta!', {
+              timeOut: 3000
+            });
           }, error => {
-            console.log(error)
+            console.log(error);
+            this.toastr.error('Erro ao inserir novo registo.', 'Alerta!', {
+              timeOut: 3000
+            });
           }
         );
       }
@@ -139,8 +154,14 @@ export class EventosComponent implements OnInit {
           () => {
             template.hide();
             this.getEventos();
+            this.toastr.success('Registo editado com sucesso.', 'Alerta!', {
+              timeOut: 3000
+            });
           }, error => {
             console.log(error);
+            this.toastr.error('Erro ao editar novo registo.', 'Alerta!', {
+              timeOut: 3000
+            });
           }
         );
       }
@@ -153,9 +174,8 @@ export class EventosComponent implements OnInit {
       (_eventos: Evento[]) => {
       this.eventos = _eventos;
       this.eventosFiltrados = this.eventos;
-      console.log(_eventos);
     }, error => {
-      console.log(error);
+      this.toastr.error(`Erro ao editar novo registo : ${error}.`, 'Alerta!');
     });
   }
 
